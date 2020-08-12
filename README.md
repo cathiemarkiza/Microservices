@@ -16,7 +16,7 @@ Microservices Architecture;
 Spring Boot;
 Apache Kafka;
 Apache Camel;
-Java/JavaRx;
+Java/rxJava;
 Rest Services API;
 Cassandra;
 Maven;
@@ -28,5 +28,5 @@ Strings processing;
 DTO improvement;
 Cassandra writing data;
 Messaging queue performance; 
-Reactive consumers for Kafka service;
+
  
