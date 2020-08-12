@@ -12,21 +12,21 @@ kafka.bat - Example bat file with commands to run Zookeeper and Kafka services c
 
 
 Technologies:
-Microservices Architecture
-Spring Boot
-Apache Kafka
-Apache Camel
-Java/JavaRx
-Rest Services API
-Cassandra
-Maven
-git
+Microservices Architecture;
+Spring Boot;
+Apache Kafka;
+Apache Camel;
+Java/JavaRx;
+Rest Services API;
+Cassandra;
+Maven;
+git;
 
 Algorithmes:
 
-Strings processing
-DTO improvement 
-Cassandra writing data
-Messaging queue performance 
-Reactive consumers for Kafka service
+Strings processing;
+DTO improvement;
+Cassandra writing data;
+Messaging queue performance; 
+Reactive consumers for Kafka service;
  
