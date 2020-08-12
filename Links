@@ -1,0 +1,31 @@
+
+package markiza.dataobject;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+public class Links implements Serializable
+{
+
+    private Profile profile;
+    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private final static long serialVersionUID = 6827068454465917659L;
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+    }
+
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
+    }
+
+    public void setAdditionalProperty(String name, Object value) {
+        this.additionalProperties.put(name, value);
+    }
+
+}
