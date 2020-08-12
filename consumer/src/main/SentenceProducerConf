@@ -1,0 +1,140 @@
+package markiza.consumer;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.bson.types.ObjectId;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
+import static javax.ws.rs.core.Response.Status.CONFLICT;
+import static javax.ws.rs.core.Response.Status.CREATED;
+import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+import static javax.ws.rs.core.Response.Status.OK;
+
+
+@Component
+@Produces({MediaType.APPLICATION_JSON})
+@Path(RestPaths.sentencesPath)
+public class SentenceProducerConf {
+
+    private static final Logger logger = LogManager.getLogger(SentenceProducerConf.class);
+
+    static final String resourceHrefHeaderName = "resourceHref";
+
+    @Autowired
+    private InputWords inputWords;
+
+    @Autowired
+    private  OutSentence outSentence;
+
+    @GET
+    public List<SentenceData> getSentences() {
+        List<ConfigSentence> sentences = OutSentence.getAllBaseSentences();
+        return sentences.stream().map(s -> s.generateBaseSentenceJSON()).collect(Collectors.toList());
+    }
+
+    @GET
+    @Path("/{id}")
+    public Response getSentence(@PathParam("id") String id) {
+        Function<Sentence, SentenceData> jsonFunction = sentence -> {
+            return sentence.generateSentenceJSON();
+        };
+        return getSentence(id, jsonFunction);
+    }
+
+    @GET
+    @Path("/{id}/yodaTalk")
+    public Response getSentenceYodaTalk(@PathParam("id") String id) {
+        Function<Sentence, SentenceData> jsonFunction = sentence -> {
+            return sentence.generateYodaSentenceJSON();
+        };
+        return getSentence(id, jsonFunction);
+    }
+
+    private Response getSentence(String id, Function<Sentence, SentenceData> responseJsonFunction) {
+        ObjectId objectId = createObjectId(id);
+        if (objectId == null) {
+            NotificConfiguration response = new NotificConfiguration("Bad format of id [%s].", id);
+            return Response.status(BAD_REQUEST).entity(response).build();
+        }
+
+        if (!OutSentence.incrementSentenceShowDisplayCount(objectId)) {
+            return Response.status(INTERNAL_SERVER_ERROR).entity(response).build();
+        }
+
+        Optional<Sentence> res = OutSentence.getSentence(objectId);
+        if (res.isPresent()) {
+            return Response.status(OK).entity(responseJsonFunction.apply(res.get())).build();
+        } else {
+            return Response.status(NOT_FOUND).entity(response).build();
+        }
+    }
+
+    @POST
+    @Path("/generate")
+    public Response postSentence() {
+        Words words = null;
+        try {
+            words = generateRandomSentenceWords();
+        } catch (RuntimeException ex) {
+            return Response.status(BAD_REQUEST).entity(response).build();
+        }
+
+        return generateResponseForNewSentence(words);
+    }
+
+    private Words generateRandomSentenceWords() {
+        Optional<WordData> noun = inputWords.getRandomWord(WordCategory.NOUN);
+        Optional<WordData> verb = inputWords.getRandomWord(WordCategory.VERB);
+        Optional<WordData> adjective = inputWords.getRandomWord(WordCategory.ADJECTIVE);
+
+        Words words = new Words(noun, verb, adjective);
+        words.validate();
+        return words;
+    }
+
+    private Response generateResponseForNewSentence(Words words) {
+
+        List<Sentence> sentences = sentenceData.getSentences(words);
+        if (!sentences.isEmpty()) {
+            if (sentences.size() > 1) {
+            }
+            Sentence sentence = sentences.get(0);
+            boolean isOk = sentenceData.incrementSentenceSameGeneratedCount(sentence.getId());
+            if (!isOk) {
+                return Response.status(INTERNAL_SERVER_ERROR).entity(entity).build();
+            } else {
+                SentenceData entity = sentenceData.getSentence(sentence.getId()).get().generateSentenceJSON();
+                return Response.status(CONFLICT).entity(entity).header(resourceHrefHeaderName, entity.getHref()).build();
+            }
+        } else {
+            SentenceData entity = sentenceData.createAndStoreSentence(words).generateSentence();
+            return Response.status(CREATED).entity(entity).header(resourceHrefHeaderName, entity.getHref()).build();
+        }
+    }
+
+    private ObjectId createObjectId(String id) {
+        ObjectId objectId;
+        try {
+            objectId = new ObjectId(id);
+        } catch (RuntimeException ex) {
+            return null;
+        }
+        return objectId;
+    }
+
+}

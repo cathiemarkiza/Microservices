@@ -1,0 +1,19 @@
+package markiza.producer;
+
+@Service
+public class GetDataImplementation implements GetData {
+    private RestTemplate restTemplate;
+    private String apiUrl;
+
+    public GetDataImplementation(RestTemplate restTemplate, @Value("${api_url}") String apiUrl) {
+        this.restTemplate = restTemplate;
+        this.apiUrl = apiUrl;
+    }
+
+    @Override
+    public List<Data> getData() {
+        UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(apiUrl);
+        MainDataOb data = restTemplate.getForObject(builder.toUriString(), MainDataOb.class);
+        return data.getData();
+    }
+}

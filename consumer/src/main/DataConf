@@ -1,0 +1,35 @@
+package markiza.consumer;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import static javax.ws.rs.core.Response.Status.OK;
+
+@Path("")
+@Produces({MediaType.APPLICATION_JSON})
+public class DataConf {
+
+
+    private static final Logger logger = LogManager.getLogger(DataConf.class);
+
+    private static class ApiConf {
+
+        @JsonProperty
+        private final String wordsPath = UtilConstants.wordsPath;
+
+        @JsonProperty
+        private final String sentencesPath = UtilConstants.sentencesPath;
+    }
+
+    private static final ApiConf Api = new ApiConf();
+
+    @GET
+    public Response getRootApi() {
+        return Response.status(OK).entity(ApiConf).build();
+    }
+}

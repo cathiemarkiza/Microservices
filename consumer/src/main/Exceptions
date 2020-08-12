@@ -1,0 +1,39 @@
+package markiza.consumer;
+
+public class Exceptions extends RuntimeException {
+
+    private static final long serialVersionUID = -391250647648738338L;
+
+    public Exceptions()
+
+    {
+
+    }
+
+    public Exceptions(String s)
+
+    {
+        super(s);
+    }
+
+    public Exceptions(String s, Throwable throwable)
+
+    {
+        super(s, throwable);
+    }
+
+    public Exceptions(String s, Throwable throwable, boolean b, boolean b1)
+
+    {
+        super(s, throwable, b, b1);
+    }
+
+    public Exceptions(Throwable throwable)
+
+    {
+        super(throwable);
+    }
+
+
+    }
+}

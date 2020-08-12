@@ -1,0 +1,13 @@
+package markiza.consumer;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface InputWords {
+
+    void putWord(Word word);
+    Optional<WordData> getWord(String id);
+    Optional<WordData> getRandomWord(Categories category);
+    List<WordData> getAllWords();
+
+}

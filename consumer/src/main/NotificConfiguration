@@ -1,0 +1,26 @@
+package markiza.consumer;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.xml.bind.annotation.XmlElement;
+
+public class NotificConfiguration {
+
+    @JsonProperty
+    @XmlElement
+    private String message;
+
+    public NotificConfiguration() {
+    }
+
+    public NotificConfiguration(String str, Object... objects) {
+        this.message = String.format(str, objects);
+    }
+
+    public NotificConfiguration(String message) {
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+}

@@ -1,0 +1,19 @@
+package markiza.consumer;
+
+import org.bson.types.ObjectId;
+import java.util.List;
+import java.util.Optional;
+
+
+public interface OutSentence {
+
+
+    SentenceModel createAndStoreSentence(Words words);
+    boolean incrementSentenceShowDisplayCount(ObjectId id);
+    boolean incrementSentenceSameGeneratedCount(ObjectId id);
+    Optional<Sentence Model> getSentence(ObjectId id);
+    List<Sentence Model> getSentences(int hash);
+    List<Sentence Model> getSentences(Words words);
+    List<ConfigSentence> getAllBaseSentences();
+
+}

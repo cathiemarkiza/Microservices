@@ -1,0 +1,9 @@
+package markiza.producer;
+import  cathie_dev.data_object_test.Data;
+import  java.util.List;
+
+
+public interface GetData {
+    List<Data> getData();
+}
+

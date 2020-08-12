@@ -1,0 +1,67 @@
+package markiza.consumer;
+
+import org.bson.types.ObjectId;
+
+public class SentenceModel extends ConfigSentence {
+
+
+    private final Long showDisplayCount;
+    private final Long sameGeneratedCount;
+
+
+    public SentenceModel(ObjectId id, Words words, Long showDisplayCount,
+                    Long sameGeneratedCount) {
+        super(id, words);
+
+        this.showDisplayCount = showDisplayCount;
+        this.sameGeneratedCount = sameGeneratedCount;
+    }
+
+    public SentenceData generateSentenceJSON() {
+        String text = words.getNoun() + " " + words.getVerb() + " " + words.getAdjective();
+        Long _sameGeneratedCount = (sameGeneratedCount != null && (sameGeneratedCount) > 1L) ?
+                sameGeneratedCount : null;
+        return new SentenceData(id, text, showDisplayCount, _sameGeneratedCount, id.getTimestamp());
+    }
+
+    public SentenceData generateYodaSentenceJSON() {
+        String text = words.getAdjective() + " " + words.getNoun() + " " + words.getVerb();
+        return new SentenceData(id, text, null, null, null);
+    }
+
+    public long getShowDisplayCount() {
+        return showDisplayCount;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof SentenceModel)) {
+            return false;
+        }
+
+        Sentence sentence = (SentenceModel) o;
+
+        if (showDisplayCount != sentence.showDisplayCount) {
+            return false;
+        }
+        if (sameGeneratedCount != sentence.sameGeneratedCount) {
+            return false;
+        }
+        if (id != null ? !id.equals(sentence.id) : sentence.id != null) {
+            return false;
+        }
+        return words != null ? words.equals(sentence.words) : sentence.words == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (words != null ? words.hashCode() : 0);
+        result = 31 * result + (int) (showDisplayCount ^ (showDisplayCount >>> 32));
+        result = 31 * result + (int) (sameGeneratedCount ^ (sameGeneratedCount >>> 32));
+        return result;
+    }
+}

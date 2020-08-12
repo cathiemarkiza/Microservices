@@ -1,0 +1,50 @@
+package markiza.producer;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+public class CassandraRestConnector {
+
+    private final CassandraSinkConnectorConfig config;
+    private final CassandraStructure cassandraStructure;
+    final CachedSessionProvider cachedSessionProvider;
+
+    CassandraRestConnector(final CassandraSinkConnectorConfig config, CassandraStructure cassandraStructure) {
+        this.config = config;
+        this.cassandraStructure = cassandraStructure;
+
+        this.cachedSessionProvider = new CachedSessionProvider(config.cassandraHost, config.cassandraUsername, config.cassandraPassword);
+    }
+
+    void write(final Collection<SinkRecord> records) {
+        final Session session = cachedSessionProvider.getValidConnection();
+
+        final Map<String, BufferedRecords> bufferByTable = new HashMap<>();
+        for (SinkRecord record : records) {
+            final String table = destinationTable(record);
+            BufferedRecords buffer = bufferByTable.get(table);
+            if (buffer == null) {
+                buffer = new BufferedRecords(config, config.cassandraKeyspace, table, cassandraStructure, session);
+                bufferByTable.put(table, buffer);
+            }
+            buffer.add(record);
+        }
+        for (BufferedRecords buffer : bufferByTable.values()) {
+            buffer.flush();
+            buffer.close();
+        }
+    }
+
+    void closeQuietly() {
+        cachedSessionProvider.closeQuietly();
+    }
+
+    String destinationTable(SinkRecord record) {
+        final Struct struct = (Struct)record.value();
+        final String table = struct.getString("table");
+        final String tableName = config.tableNameFormat.replace("${topic}", table);
+        return tableName;
+    }
+
+}

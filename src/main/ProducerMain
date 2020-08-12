@@ -1,0 +1,28 @@
+package markiza.producer;
+
+import cathie_dev.producer_module.KafkaProducerMessages;
+import cathie_dev.producer_module.GetData;
+import cathie_dev.producer_module.GetDataImplementation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
+
+@EnableScheduling
+@SpringBootApplication
+
+public class ProducerMain {
+
+
+    public static void main(String[] args) {
+        ApplicationContext context = SpringApplication.run(ProducerMain.class, args);
+
+        KafkaProducerMessages producer = context.getBean(KafkaProducerMessages.class);
+        GetData service = context.getBean(GetDataImplementation.class);
+        service.getData().forEach(producer::sendMessage);
+
+    }
+
+}

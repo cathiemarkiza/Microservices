@@ -1,0 +1,7 @@
+package markiza.consumer;
+
+import cathie_dev.data_object_test.Data;
+public interface DataService
+{
+    Data saveMessage(Data data);
+}

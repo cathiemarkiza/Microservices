@@ -1,0 +1,10 @@
+package markiza.consumer;
+
+public enum Categories
+
+{
+    NOUN,
+    VERB,
+    ADJECTIVE;
+
+}

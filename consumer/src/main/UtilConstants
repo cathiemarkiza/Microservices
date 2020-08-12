@@ -1,0 +1,9 @@
+package markiza.consumer;
+
+public class UtilCostants {
+
+    public static final String rootPath = "api";
+    public static final String wordsPath = "/words";
+    public static final String sentencesPath = "/sentences";
+
+}

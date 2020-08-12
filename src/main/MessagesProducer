@@ -1,0 +1,10 @@
+package markiza.producer;
+
+import org.springframework.scheduling.annotation.Async;
+
+public interface MessagesProducer {
+
+    @Async
+    void saveMessage(long id, String message);
+
+}
