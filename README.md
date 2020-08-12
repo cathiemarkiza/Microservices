@@ -2,7 +2,8 @@
 
 Directories of repository:
 
-src - producer module and restservices source files 
+src - producer module and restservices source files
+
 consumer - source files for consumer service and for cassandra data base processing 
 
 
